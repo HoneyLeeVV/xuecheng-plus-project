@@ -108,11 +108,6 @@ public class CourseBase implements Serializable {
     private String auditStatus;
 
     /**
-     * 发布状态
-     */
-    private String publishStatus;
-
-    /**
      * 课程发布状态 未发布  已发布 下线
      */
     private String status;

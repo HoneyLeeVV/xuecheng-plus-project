@@ -1,4 +1,4 @@
-package com.xuecheng.content;
+package com.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -7,35 +7,27 @@ import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
+import com.xuecheng.content.service.CourseBaseInfoService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * @Description 测试mapper
+ * @Description
  * @Author:星海
- * @CreateTime:2023/3/3022:25
+ * @CreateTime:2023/4/209:17
  */
-@SpringBootTest
-public class CourseBaseMapperTests {
+@Service
+@Slf4j
+public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     @Autowired
     private CourseBaseMapper courseBaseMapper;
-
-    @Test
-    void testCourseBaseMapper(){
-        //1.数据库表一定存在，断言
-        CourseBase courseBase = courseBaseMapper.selectById(74L);
-        Assertions.assertNotNull(courseBase);
+    @Override
+    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
         //2.根据课程查询条件
-        //2.1查询条件对象
-        QueryCourseParamsDto queryCourseParamsDto = new QueryCourseParamsDto();
-        queryCourseParamsDto.setCourseName("java");
-        queryCourseParamsDto.setAuditStatus("202004");
-        queryCourseParamsDto.setPublishStatus("203001");
         //2.2构建查询条件
         LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
         //2.2.1根据课程名称模糊查询  name like '%名称%'
@@ -43,12 +35,11 @@ public class CourseBaseMapperTests {
                 CourseBase::getName,queryCourseParamsDto.getCourseName());
         //2.2.2根据课程审核状态
         queryWrapper.eq(StringUtils.isNotEmpty(queryCourseParamsDto.getAuditStatus()),
-                        CourseBase::getAuditStatus,queryCourseParamsDto.getAuditStatus());
+                CourseBase::getAuditStatus,queryCourseParamsDto.getAuditStatus());
+        //2.2.2根据课程审核状态
+        queryWrapper.eq(StringUtils.isNotEmpty(queryCourseParamsDto.getStatus()),
+                CourseBase::getStatus,queryCourseParamsDto.getStatus());
         //3.根据分页参数进行查询
-        //3.1创建分页参数对象
-        PageParams pageParams = new PageParams();
-        pageParams.setPageNo(1L);
-        pageParams.setPageSize(10L);
         //3.2构建分页条件
         Page<CourseBase> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
         Page<CourseBase> courseBasePage = courseBaseMapper.selectPage(page, queryWrapper);
@@ -58,8 +49,6 @@ public class CourseBaseMapperTests {
         List<CourseBase> items = courseBasePage.getRecords();
 
         PageResult<CourseBase> courseBasePageResult = new PageResult<>(items, total, pageParams.getPageNo(), pageParams.getPageSize());
-
-
+        return courseBasePageResult;
     }
-
 }
