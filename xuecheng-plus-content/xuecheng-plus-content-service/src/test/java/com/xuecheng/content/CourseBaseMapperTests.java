@@ -35,7 +35,7 @@ public class CourseBaseMapperTests {
         QueryCourseParamsDto queryCourseParamsDto = new QueryCourseParamsDto();
         queryCourseParamsDto.setCourseName("java");
         queryCourseParamsDto.setAuditStatus("202004");
-        queryCourseParamsDto.setStatus("203001");
+        queryCourseParamsDto.setPublishStatus("203001");
         //2.2构建查询条件
         LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
         //2.2.1根据课程名称模糊查询  name like '%名称%'
